@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>————火柴人————</title>
+</head>
+<style>
+</style>
+<body>
+<canvas id="oCanvas" style="position:absolute;background:black;left:0px;top:0px">
+</canvas>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var socket = io.connect('http://192.168.1.101',{port:80});
+var hcrList = new Array();
+socket.on("s2cjson",function(data)
+{	
+	//console.log(data.json);
+	
+	hcrList = eval(data.json);
+	alert(hcrList.toString());
+	//console.log(hcrList);
+	for(var i = 0; i < hcrList.length; i++)
+	{
+		//playerInit(hcrList[i])
+	}
+});
+picArr = [[1,0],[1,1],[1,2,2],[1,4],[1,5]];
+var img = new Image();
+img.src = "res/guard/guard_0.png";
+var i = 0;
+/*
+	drawall函数是什么呢；
+	这是一个遍历函数，画所有东西的
+	而且每秒都在画，他是如何遍历的呢；
+	首先我们把每个要画的东西存入一个数组叫drawList
+	为什么不是playerList呢，因为除了player还有技能效果，还有背景
+	加入drawList的理想接口
+*/
+function drawAll()
+{
+	ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+	//drawCenter(img,picArr[i],hcrList[0].x,hcrList[0].y);
+	//drawCenter(img,picArr[i],hcrList[1].x,hcrList[1].y);
+	//i++;
+	//if(i >= picArr.length) i= 0;
+	for(var i = 0; i < drawList.length; i++);///!!!!!!!!!!!!!!!!!!!!!!
+	{		
+		if()		
+	}
+}
+/*
+要知道所有动作都是一个命令+参数
+比如	walk，30，50		//指向坐标的动作
+		attack player1	//指向目标的技能
+		burn 100，100	//指向坐标的范围技能，范围大小其实是在burn中的
+		
+		设想理想的接口：
+		服务器传来，
+		服务器应该把loc每次都传来，否则如果一个player在网页中不存在，网页却不能通过init初始化这个player，因为没loc
+		name:"player1",action:"walk",obj:[x,y];
+		name:"player2",action:"login",obj:[x,y];
+		name:"player2",action:"init",obj:[x,y];
+		name:"player3",action:default,obj:[x,y];
+		name:"palyer4",action:"attack",obj:["player3"];
+		//服务器人多的话，就是每秒发一个json数组
+		人少的话服务器显然是一条一条发来的。每条都是json，解析这个json。
+		name:"player2",action:"init",obj:[x,y];那这条来说。
+		一个人登录时同样要初始化别人的信息，主要是位置
+		那么这个player2该不该是对象呢？答案是不该！
+		最好的方法是	swtich "action"  case:"init" 变量空间.init("player2",x,y)
+		
+		
+*/
+function playerInit(player)
+{  
+	
+	walk(player);
+}
+function walk(player)
+{		
+	for(var key in player)
+	{
+		console.log(player[key]);
+	}
+	ctx.fillStyle = "red";
+	//ctx.fillText(player.name,player.x,player.y);
+	//drawCenter(img,picArr[i],player.x,player.y);
+	i++;
+	if(i >= picArr.length)	i = 0;
+	
+}
+//传说中的动作函数数组！
+/*蛋碎了。
+function Action(player)
+{
+	this.walk = function()
+	{
+		console.log(player.name);
+		var img = new Image();
+		img.src = "res/guard/guard_0.png";
+		var picArr = 0;
+		if(!picArr)
+			picArr = [[1,0],[1,1],[1,2,2],[1,4],[1,5]];
+			//picArr = [[1,2,2],[1,2,2]];
+		var i = 0;
+		setInterval(function()
+		{
+			ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+			ctx.fillStyle = "red";
+			ctx.fillText(player.name,player.x,player.y);
+			drawCenter(img,picArr[i],player.x,player.y);
+			i++;
+			if(i >= picArr.length)	i = 0;
+		},fps);
+	}
+}
+*/
+
+var fps = 100;
+var me = null;
+if(document.cookie)
+{
+	me = {};
+	me.name = document.cookie.split('=')[1];
+	socket.emit("c2s",{type:"login",name:me.name});
+}
+
+var playList = [];
+
+window.onload = function()
+{	
+	
+	//——————————————————画布界面————————————————————————会莫名其妙变大
+	
+	
+	
+	oCanvas = document.getElementById("oCanvas");
+	oCanvas.width = window.innerWidth;
+	oCanvas.height = window.innerHeight;	
+	ctx = oCanvas.getContext("2d");
+	
+	if(me == null||me == "")
+	{
+		loginDiv = document.createElement('div');
+		loginDiv.style.cssText = "position:fixed;left:50%;margin-left:-160px;top:50%;margin-top:-90px;width:320px;height:180px;background:#CCC;z-index:1;";		
+		loginDiv.innerHTML = "<div style='text-align:center;margin:10px'>"
+		+"登录<hr>"
+		+"<form onsubmit='fLogin()' style='margin:20px;text-align:right'>"
+		+"用户名：<input type='text' id='username' name='11user' placeholder='用户名' autofocus/>"
+		+"<hr>密码:<input type='text' name='psw' placeholder='密码'><hr>"
+		+"<input type='submit' value='登录' style='width:60px;height:25px'/></form></div>";
+		document.body.appendChild(loginDiv);
+	}	
+	//eval(me.name+" = new Player(state)");
+	/*
+		关于新建玩家的方法
+		1：服务器发来字符串=“玩家的名字”
+		2：方法两种playerInit（“玩家名”）
+					或者玩家 = player（xxx）
+		3：会导致动作调用不同
+					1：walk（玩家名）
+					2：玩家。walk
+		行动是相对的，不需要调用本来的状态locXY
+		4：function（玩家名）看来更安全也更方便
+		5：这种方法会有什么限制?
+		6：走路：walk（“玩家名”，-5）；	获取信息getInfo（玩家名，isSHow）？
+		7：这样的好处就是每个玩家的信息仅仅是一个json
+	*/
+	setInterval(function(){drawAll()},1000);//总函数。。一个页面只能一个。。不然错乱刷新。
+}
+
+
+/*
+
+function Player(state)
+{
+	_this = this;
+	this.locX = state.x;
+	this.locY = state.y;
+	var img = new Image();
+	img.src = "res/guard/guard_0.png";
+	//img.src = "akuan.png";
+	this.walk = function(picArr)
+	{		
+		if(!picArr)
+			picArr = [[1,0],[1,1],[1,2,2],[1,4],[1,5]];
+			//picArr = [[1,2,2],[1,2,2]];
+		var i = 0;
+		setInterval(function()
+		{
+			ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+			drawCenter(img,picArr[i]);
+			i++;
+			if(i >= picArr.length)	i = 0;
+		},fps);
+	}
+	
+	img.onload = function()
+	{
+		//alert(img.height);
+		//ctx.drawImage(img,0,0)
+		//this.stand();
+		_this.walk();
+	};
+}
+*/
+function drawCenter(img,arr,x,y)
+{
+	
+	var _ = {};
+	if(typeof(arr) == "object"){_.x = arr[0];	_.y = arr[1];	if(arr.length > 2)_.n = arr[2]}
+		
+	_.width = img.width;
+	_.height = img.height;
+	_.srcX = img.width/10*_.y; 	
+	_.srcY = img.height/5*_.x;
+	if(_.n > 1){_.srcW = img.width/10*_.n;}
+	else {_.srcW = img.width/10;}
+	_.srcH = img.height/5;
+	if(_.n){_.destW = (_.width/10)*_.n;}
+	else{_.destW = (_.width/10);}	
+	_.destH = (_.height/5);
+	if(_.n){_.destX = (oCanvas.width-_.destW)/2};
+	_.destY = (oCanvas.height-_.destH)/2;
+	ctx.drawImage(img,		_.srcX,_.srcY,	_.srcW,_.srcH,	x,y,	_.destW,_.destH);
+	//console.log(_)
+}
+
+fLogin = function()
+{
+	var username = document.getElementById('username');	
+	namestr = username.value;	
+	var oDate = new Date();
+	oDate.setDate(oDate.getDate()+300)	
+	if(namestr != '')
+	{
+		document.cookie = "user="+namestr+";expires="+oDate;		
+		return false;
+	}
+	else
+	{
+		me = {};
+		me.name = namestr;				
+		return false;
+	}
+	
+}
+
+window.onresize = window.onscroll = function()
+{	
+	oCanvas.width = window.innerWidth;
+	oCanvas.height = window.innerHeight;
+	
+}
+
+</script>
+</html>

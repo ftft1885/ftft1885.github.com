@@ -1,9 +1,341 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8">
-	<title>火柴人测试</title>
+<head>
+<meta charset="utf-8">
+<title>————火柴人测试版————</title>
 </head>
+<style>
+</style>
 <body>
-	测试111111111
+<div id="parrot1" style="position:absolute;width:200px;height:200px;color:#EE7700;z-index:10;text-align:center;"></div>
+<canvas id="oCanvas" style="position:absolute;background:black;left:0px;top:0px">
+
+</canvas>
 </body>
+<script src="js/action.js"></script>
+<script src="js/refresh.js"></script>
+<script src="js/ai.js"></script>
+<!--<script src="/socket.io/socket.io.js"></script>-->
+<script>
+/*
+var socket = io.connect('http://192.168.1.101',{port:80});
+socket.on("s2cjson",function(data)
+{		
+	hcrList = data.json;	
+	for(var i = 0; i < hcrList.length; i++)
+	{
+		//playerInit(hcrList[i])
+	}
+});
+*/
+//发现初始化不可能和动作json在一起；至少不是这样的
+var jsonArr = [{name:"ft",action:"init",loc:[500,350],blood:100,isBlock:0.8},{name:"gyl",action:"none",loc:[800,350],blood:100,isBlock:0.8}];
+var myname = "ft";
+
+
+
+function Config() 
+{
+	this.sceneX = 0;
+	this.FPS = 30;
+	this.hcr = new Image();
+	this.hcr.src = "img/guard_0.png";
+	this.end = false;
+	this.count = 0;
+	this.scene = new Image();
+	this.scene.src = "img/map1.png";
+	this.moveSpeed = this.FPS / 10;
+	this.fnInt = 
+	{
+		parrot:{},
+		scene:0
+	};
+};
+
+function testjson()
+{
+	window.playerHash = {};
+	addPlayerInfo();
+	for(var key in jsonArr)
+	{
+		//console.log(jsonArr[key].name)
+		playerHash[jsonArr[key].name] = new oHcr(jsonArr[key].name,jsonArr[key].action,jsonArr[key].loc);
+	
+		drawArr.push(playerHash[jsonArr[key].name]);
+		//console.log(drawArr)
+	}
+	addName();
+	
+}
+
+
+
+
+
+document.onclick = function()//事件触发测试函数
+{
+	//现在需要点击就会走
+	//var timer = setInterval(function(){playerHash["ft"].loc[0] += 10;if(playerHash["ft"].loc[0] > 800)clearInterval(timer);},10);//显然已经完美
+
+	//动作测试
+	//setWalk("ft",[800,200]);
+	//setAttack("ft","ft");
+	//setTimeout(function(){setWalk("gyl",[800,200])},800);
+	//制作抖动效果。
+	//Shake(1,50);//这里需要2个参数，抖动时间和抖动程度
+	//扣血效果
+	//getHert("left",50);
+	//人物面朝翻转函数
+	//显然我们不该改变它真实位置，那我们拿什么来画呢，用一个drawloc？
+	//setBlock(");
+	//弹幕的制作，一个好的游戏必须要有弹幕，就像wow中的recount
+	//parrot("HELLO",20,"ft");//名字源于wow插件,直接用名字吧。。
+	//var test = setInterval(function(){config.test += 0.001;if(config.test >= 0.95)clearInterval(test)},10)
+	//refreshScene("right",0.2,0.1)
+	//setWalk("ft",[1500,500]);
+	//refreshScene("right",0.99,1.2);
+	//refreshScene("left",500,3)
+	setMoveBy("ft",-100,5)	
+}
+
+
+
+function rotatePlayer(name)
+{
+	ctx.save();
+	ctx.translate(window.innerWidth, 0);
+	ctx.scale(-1, 1);		
+}
+
+function end()//没血结束的函数
+{
+	for(var key in playerHash)
+	{
+		playerHash[key].action = "none";
+		
+	}
+	config.end = true;
+}
+
+
+
+window.onload = function()
+{	
+	document.onselectstart = function(){return false;}
+	window.config = new Config();	
+	config.hcr.onload = function()
+	{
+		testjson();//这个函数有个才有playerHash
+		playerHash["gyl"].face = "turnLeft";
+		playerHash["gyl"].bloodPos = "right";
+		playerHash["ft"].bloodPos = "left";
+		//setWalk("gyl",[400,200]);	
+		oCanvas = document.getElementById("oCanvas");
+		oCanvas.width = window.innerWidth;
+		oCanvas.height = window.innerHeight;	
+		ctx = oCanvas.getContext("2d");
+		setInterval(function(){draw();},config.FPS);
+	}
+}
+
+var drawArr = [];//总的要画的数组
+
+function oHcr(name,action,loc)
+{
+	
+		this.blood = 100;
+		this.name = name;
+		this.loc = loc;
+		this.action = action;
+		
+		
+	this.show = function()
+	{	
+		ctx.restore();
+		playerHash[name].drawloc = [];		
+		playerHash[name].drawloc[0] = playerHash[name].loc[0];		
+		playerHash[name].drawloc[1] = playerHash[name].loc[1];		
+		if(playerHash[name].face == "turnLeft" )
+		{
+			ctx.save();
+			ctx.translate(oCanvas.width, 0);			
+			ctx.scale(-1, 1);	
+			playerHash[name].drawloc[0] = oCanvas.width - playerHash[name].loc[0] - config.hcr.width/10;
+			
+			playerHash[name].face == "left"
+		}
+		if(playerHash[name].face == "left" )
+		{
+			playerHash[name].drawloc[0] = oCanvas.width - playerHash[name].loc[0] - config.hcr.width/10;
+		}
+		switch (this.action)//关键。this。
+		{
+			case "block":this.block();break;
+			case "attack":this.attack();break; 
+			case "walk":this.walk();break;
+			case "none":drawFromTo(config.hcr,[5,10,1,1],playerHash[name].drawloc);
+				break;
+			default:drawFromTo(config.hcr,[5,10,1,1],playerHash[name].drawloc);break;
+		}
+		
+	}
+	//接下来解决如何随意更换动作函数，主要是在show中添加swtich
+	this.walk = function()//根据时间变参数的函数
+	{		
+		drawFromTo(config.hcr,playerHash[name].from,this.drawloc);			
+	}
+	this.attack = function()
+	{		
+		drawFromTo(config.hcr,playerHash[name].from,this.drawloc);			
+	}
+	this.block = function()
+	{
+		drawFromTo(config.hcr,playerHash[name].from,this.drawloc);	
+	}
+}
+
+
+
+
+function addHcr(name,loc)//添加火柴人的方法loc自带的，不应该有loc
+{
+	playerHash[name] = new oHcr(loc);//需要获取所有数据
+	drawArr.push(playerHash[name]);
+	
+}
+var ft1_x = 200;
+var ft1_y = 200;
+//addHcr("ft1",[ft1_x,200]);
+//addHcr("ft2",[100,200]);
+//drawArr.push(drawft);
+//drawArr.push(drawft2);
+
+
+
+
+
+
+
+
+
+function drawOther()
+{
+	ctx.fillStyle = "#FFOOOO";
+	ctx.beginPath();
+	ctx.arc(200,200,50,0,Math.PI * 2,true);
+	ctx.closePath();
+	//console.warn(11111)
+}
+
+function draw()
+{
+	if(!config.end && config.count % 10 === 0)//这个不应该是每帧，而是每回合，回合就是*10
+	{
+		//AI2("ft");	AI2("gyl");
+	}
+	//由于ai是每回合的判断，所以写在这里
+	ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+	/*
+	我们要做的是动态添加下面的各种draw
+	如何做到动态？
+	建立一个数组，已有需求就push进去
+	理想模型是
+	每次写个函数也烦爆了
+	*/
+	//drawOther();
+	drawLongScene(config.sceneX);//画背景函数，应该是动态的。
+	for(var key in drawArr)
+	{
+		//console.log(drawArr)
+		if(drawArr[key])
+			drawArr[key].show();
+		//else(alert(drawArr[key]))
+	}
+	
+	config.count ++;
+	//drawFromTo(config.hcr,[5,10,1,1],[200,200]);
+	//drawFromTo(config.hcr,[5,10,1,1],[600,500]);
+}
+
+function drawLongScene(x)//画长背景，就是一图流，x表示起点  o<x<1
+{
+	var img = config.scene;	
+	//scrH = destH = img.height	
+	var srcX = img.height/window.innerHeight*window.innerWidth;
+	var trueX = img.width - srcX;//真实可用宽度
+	x = trueX * x;
+	ctx.restore();//恢复画笔！
+	ctx.drawImage(	img,
+					x,0,   //src位置
+					srcX,img.height,	//src高宽
+					0,0,		//dest位置
+					window.innerWidth,window.innerHeight);	//dest高宽
+}
+
+function drawStripeScene(x_width)
+{
+	//ctx.drawImage(config.scene,0,0,config.scene.width,config.scene.height,0,0,window.innerWidth,window.innerHeight);//为啥是反的？
+	//如果都是这一张图重复。那就至少要用两张这个图保证循环
+	//var x = 100;//这是两张图缝合处的x坐标
+	//		x/window.innerWidth;
+	x_width = 300;//x是比例  x初始是多少？ 显然是0或者window.innerWidth 假设是0；
+	var x = x_width / window.innerWidth;
+	var img = config.scene;
+	ctx.restore();
+	
+	ctx.drawImage(	img,
+					img.width * x,0,
+					img.width * (1 - x),img.height,
+					0,0,
+					window.innerWidth * (1 - x),window.innerHeight);//为啥是反的？
+	//第一张图
+	
+	
+	ctx.drawImage(	img,
+					img.width * (1 - x),0,
+					img.width * x,img.height,
+					window.innerWidth * (1 - x),0,
+					window.innerWidth * x,window.innerHeight);//为啥是反的？
+	
+	
+	//第二张图
+	
+
+}
+
+//先来写切图函数，需要参数（img,row，col，x,y,n）
+//就是说（行，列，起点x，起点y，横跨n格，不写就是1）
+//from:row,col,x,y,n
+//to:x,y
+function drawFromTo(img,from,to)
+{
+	var row = from[0];
+	var col = from[1];
+	var fromX = from[2];
+	//console.log(fromX);
+	var fromY = from[3];
+	if(from[4]) {var n = from[4];}
+	else{var n = 1;};
+	
+	var srcX = img.width/col*(fromX-1);
+	var srcY = img.height/row*(fromY-1);
+	
+	var srcW = img.width/col * n;
+	var srcH = img.height/row;
+	
+	var destX = to[0];
+	var destY = to[1];
+	//if(destX!=200&&destX!=400)console.log(destX);
+	var destW = srcW;
+	var destH = srcH;
+	
+	ctx.drawImage(img,srcX,srcY,srcW,srcH,destX,destY,destW,destH)
+}
+
+window.onresize = window.onscroll = function()
+{	
+	oCanvas.width = window.innerWidth;
+	oCanvas.height = window.innerHeight;	
+}
+</script>
 </html>

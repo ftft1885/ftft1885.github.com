@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8">
+<title>火柴人动作演示</title>
+</head>
+<style>
+li
+{
+	margin:5px;
+	letter-spacing:5px;
+}
+</style>
+<body>
+</body>
+<script>
+/*
+动作分act[]图像变幻
+function(player,....)
+*/
+guard = new Image();
+fps = 90;
+window.onload = function()
+{
+	oCanvas = document.createElement("canvas")
+	oCanvas.style.cssText="position:absolute;top:1%;left:30px;width:500px;height:500px;background:black;display:inline-block;margin:30px;";
+	document.body.appendChild(oCanvas);
+	oDiv = document.createElement("div");
+	oDiv.style.cssText="position:absolute;top:1%;left:600px;background:#CCC;width:500px;height:500px;display:inline-block;margin:30px";
+	oDiv.innerHTML = "<ul>动作<hr><li onclick='ft = new walk()'>走路</li><li onclick='midPierce()'>平刺</li><li>挥砍</li></ul>";
+	document.body.appendChild(oDiv);
+	ctx = oCanvas.getContext("2d");		
+	//------------------获取元素-----------------------
+	
+	//walk();	
+}
+/*
+function walk()
+{	
+	guard.src = "res/guard/guard_0.png";
+	ctx.clearRect(0,0,500,500);
+	ctx.fillStyle = "blue";
+	ctx.font = '20px serif';
+	//ctx.fillText("走	路",120,20);	
+	guard.onload = function()
+	{		
+		var act = [[0,5],[0,6],[0,7],[0,8],[0,9]];
+		var i = 0;		
+		setInterval(function()
+		{
+			ctx.clearRect(0,0,500,500);
+			drawCenter(guard,act[i]);
+			i++;
+			if(i >= act.length) i=0;
+
+		},fps);		
+	}
+}*/
+
+function walk()
+{
+	_this = this;
+	this.img = guard;
+	this.img.src = "res/guard/guard_0.png";
+	this.complete = false;
+	this.timer = null;
+	this.img.onload = function()
+	{
+		var act = [[0,5],[0,6],[0,7],[0,8],[0,9]];
+		var i = 0;		
+		_this.timer = setInterval(function()
+		{
+			ctx.clearRect(0,0,500,500);
+			drawCenter(_this.img,act[i]);
+			i++;
+			if(i >= act.length) i=0;			
+		},fps);		
+	}	
+}
+
+function midPierce()
+{
+	if(window.ft)clearInterval(ft.timer);
+	ctx.clearRect(0,0,500,500);
+	guard.src = "res/guard/guard_0.png";
+	guard.onload = function()
+	{
+		var act = [[1,0],[1,1],[1,2],[1,3],[1,4],[1,5]];
+		var i = 0;
+		setInterval(function()
+		{			
+			ctx.clearRect(0,0,500,500);
+			drawCenter(guard,act[i]);
+			i++;
+			if(i >= act.length)	i = 0;
+		},fps)
+	}
+}
+
+function drawCenter(img,x,y,n)
+{
+	
+	var _ = {};
+	if(!y){_.x = x[0];	_.y = x[1];	_.n = x[2]}
+	else{_.x = x;	_.y = y;	_.n = n}
+	
+	_.width = img.width;
+	_.height = img.height;
+	_.srcX = img.width/10*_.y; 	
+	_.srcY = img.height/5*_.x;
+	if(n){_.srcW = img.width/10*_.n;}
+	else {_.srcW = img.width/10;}
+	_.srcH = img.height/5;
+	if(n){_.destW = (oCanvas.width*0.3)*_.n;}
+	else{_.destW = (oCanvas.width*0.3);}	
+	_.destH = (oCanvas.height*0.3);
+	_.destX = (oCanvas.width-_.destW)/2;
+	_.destY = (oCanvas.height-_.destH)/2;
+	ctx.drawImage(img,		_.srcX,_.srcY,	_.srcW,_.srcH,	_.destX,_.destY,	_.destW,_.destH);
+	console.log(_)
+}
+
+</script>
+</html>
