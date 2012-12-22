@@ -115,11 +115,11 @@ window.onload = function(){
 			<h3>条件与限制</h3>
 			<dl class="dl-horizontal">
 			  <dt>api限制</dt>
-			  <dd>几乎所有api仅仅提供指向性股票查询，不能大批量查询</dd>
+			  <dd>几乎所有api仅仅提供指向性股票查询，不能大批量查询,智能选股随时可能不能用</dd>
 			  <dt>数据库限制</dt>
 			  <dd>股票智能选取，需要将服务器长时间开启并收集数据，成本太大难以做到</dd>
 			  <dt>时间紧迫</dt>
-			  <dd>文档中复杂功能未实现</dd>
+			  <dd>文档中复杂功能均未实现</dd>
 			</dl>
 		</div>
 	</section>
@@ -151,11 +151,12 @@ window.onload = function(){
 
 		<div>
 		<h3>功能结构设计</h3>
-		<img class="img-rounded"></img>
+		<p class="lead">结构：MVC</p>
 		</div>
 
 		<div>
 		<h3>需求功能和代码程序关系</h3>
+		<p class="lead">TODO..</p>
 		</div>
 	</section>
 
@@ -165,9 +166,35 @@ window.onload = function(){
 		</div>
 		<div>
 		<h3>外部接口</h3>
+		<p class="lead">服务器get接口</p>
+		<pre class="prettyprint linenums">
+map.namespace('stock',function(stock){
+    stock.get("/mystock",	"index#mystock");
+    stock.get("/about"	,	"index#about");
+    stock.get("/search"	,	"index#search");
+    stock.get("/query"	,	"index#query");
+});</pre>
+		<p class="lead">服务器post接口</p>
+		<pre class="prettyprint linenums">
+map.namespace('stock',function(stock){
+	stock.post("/adduser"		,	"index#adduser");
+	stock.post("/getuserinfo"	,	"index#getuserinfo");
+	stock.post("/addstock"		,	"index#addstock");
+});
+</pre>
 		</div>
 		<div>
 		<h3>内部接口</h3>
+		<pre class="prettyprint linenums">
+getSmartStock(url,opts);
+opts = {
+	page	:	num;
+	pagesize:	num;
+	hs_hsl	:	num;
+	hs_zf	:	num;
+	...
+	accesstoken	:	string;
+}</pre>
 		</div>
 	</section>
 
@@ -175,6 +202,7 @@ window.onload = function(){
 		<div class="page-header">
 			<h2>4.数据结构设计</h2>
 		</div>
+		<h3>逻辑结构设计</h3>
 		<p class="lead">服务器返回数据结构</p>
 		<pre class="prettyprint linenums">
 sh603333: {id:明星电缆, today:5.03, yesday:4.97, now:5.47}
@@ -193,9 +221,6 @@ stockjson[name] = {
 	now     :   _myarr[3]
 };</pre>
 
-		<div>
-		<h3>逻辑结构设计</h3>
-		</div>
 	</section>
 
 	<section id="db">
@@ -204,19 +229,51 @@ stockjson[name] = {
 		</div>
 		<div>
 		<h3>数据库环境说明</h3>
-		<p>
-		</p>
+		<p class="lead">存储数据使用MongoDB<br>快速查找使用redis</p>
+		<pre class="prettyprint linenums">
+{ "development":
+	{ "driver":   "redis"
+	, "host":     "localhost"
+	, "port":     6379
+	}
+,"staging":
+	{ "driver":   "mongoose"
+	, "url":      "mongodb://localhost/test"
+ }
+,"production":
+	{ "username": "admin"
+	, "password": "admin"
+    }
+}</pre>
+		<p class="lead">使用database driver</p>
+		<p>redis && mongoose</p>
 		</div>
 		<div>
 			<h3>数据库命名规则</h3>
 		</div>
+		<p class="lead">定义schema</p>
+		<pre class="prettyprint linenums">
+var User = define('User', function () {
+	property('name');
+	property('email', {index: true});
+	property('active', Boolean, {default: true});
+	property('createdAt', Date);
+});
+
+var Stock = define('Stock', function () {
+	property('stockid');
+	property('name');
+	proporty('price');
+	...
+});
+		</pre>
 		<div>
 			<h3>数据库安全性设计</h3>
 			<p class="lead">
 			用户不能直接操作数据库<br>
 			只能通过sql注入入侵数据库<br>
 			可以对用户输入的数据进行url encode<br>
-			再通过正则删减,然后进行sql操作<br>
+			再通过正则删减过滤,然后进行sql操作<br>
 			</p>
 		</div>
 	</section>
@@ -227,8 +284,9 @@ stockjson[name] = {
 		</div>
 		<div>
 		<ul class="thumbnails bootstrap-examples">
-		<li><img></li>
-		<li><img></li>
+		<li class="span3"><img src="img/stock_index.png" class="img-rounded"></li>
+		<li class="span3"><img src="img/stock_search.png" class="img-rounded"></li>
+		<li class="span3"><img src="img/stock_mystock.png" class="img-rounded"></li>
 		</div>
 	</section>
 
@@ -259,7 +317,7 @@ wrong stock num	</pre>
 		</div>
 		<div>
 			<h3>出错处理对策</h3>			
-			<table class="table table-hover">
+			<table class="table table-bordered">
 				<tr><td>页面错误：</td><td>给出引导性的404 Page</td></tr>
 				<tr><td>查询错误：</td><td>返回wrong number</td></tr>
 				<tr><td>前缀漏写：</td><td>智能判断并添加</td></tr>
