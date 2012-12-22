@@ -6,8 +6,14 @@
 <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet"></link>
 <link href="http://twitter.github.com/bootstrap/assets/css/docs.css" rel="stylesheet"></link>
 <link href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" rel="stylesheet"></link>
+<script src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js"></script>
 </head>
 <body>
+<script>
+window.onload = function(){
+	prettyPrint();
+}
+</script>
 <div class="container">
 <div class="row">
 	<div class="span3 bs-docs-sidebar">
@@ -83,27 +89,27 @@
 		</div>
 		<div>
 			<h3>需求概述</h3>
-			<pre>
-			．功能划分：
+	<pre class="prettyprint">
+	．功能划分：
 
-			（1）前台管理功能；
+	（1）前台管理功能；
 
-			（2）后台数据管理功能；
+	（2）后台数据管理功能；
 
-			（3）超级管理功能。
+	（3）超级管理功能。
 
-			．功能描述：
+	．功能描述：
 
-			（1）前台管理功能：可以登录页面，查看当前股票状态，查看自己关注的股
+	（1）前台管理功能：可以登录页面，查看当前股票状态，查看自己关注的股
 
-			票历史信息，查看预测器给出的建议操作
+	票历史信息，查看预测器给出的建议操作
 
-			（2）后台管理功能：查看用户的关注股票，保存股票历史信息，修改预测器
+	（2）后台管理功能：查看用户的关注股票，保存股票历史信息，修改预测器
 
-			预测参数
+	预测参数
 
-			（3）超级管理功能：能自由添加预测器 AI
-			</pre>
+	（3）超级管理功能：能自由添加预测器 AI
+	</pre>
 		</div>
 		<div>
 			<h3>条件与限制</h3>
@@ -112,6 +118,8 @@
 			  <dd>几乎所有api仅仅提供指向性股票查询，不能大批量查询</dd>
 			  <dt>数据库限制</dt>
 			  <dd>股票智能选取，需要将服务器长时间开启并收集数据，成本太大难以做到</dd>
+			  <dt>时间紧迫</dt>
+			  <dd>文档中复杂功能未实现</dd>
 			</dl>
 		</div>
 	</section>
@@ -167,6 +175,24 @@
 		<div class="page-header">
 			<h2>4.数据结构设计</h2>
 		</div>
+		<p class="lead">服务器返回数据结构</p>
+		<pre class="prettyprint linenums">
+sh603333: {id:明星电缆, today:5.03, yesday:4.97, now:5.47}
+sz000795: {id:太原刚玉, today:9.90, yesday:9.77, now:10.44}
+sz002364: {id:中恒电气, today:13.51, yesday:13.76, now:14.78}
+sz002509: {id:天广消防, today:12.88, yesday:12.95, now:13.54}
+sz002655: {id:共达电声, today:14.21, yesday:14.30, now:14.90}
+sz002660: {id:茂硕电源, today:15.53, yesday:15.40, now:16.29}
+</pre>
+		<p class="lead">服务器数据结构</p>
+		<pre class="prettyprint linenums">
+stockjson[name] = {
+	id      :   _myarr[0],
+	today   :   _myarr[1],
+	yesday  :   _myarr[2],
+	now     :   _myarr[3]
+};</pre>
+
 		<div>
 		<h3>逻辑结构设计</h3>
 		</div>
@@ -186,6 +212,12 @@
 		</div>
 		<div>
 			<h3>数据库安全性设计</h3>
+			<p class="lead">
+			用户不能直接操作数据库<br>
+			只能通过sql注入入侵数据库<br>
+			可以对用户输入的数据进行url encode<br>
+			再通过正则删减,然后进行sql操作<br>
+			</p>
 		</div>
 	</section>
 
@@ -206,9 +238,33 @@
 		</div>
 		<div>
 			<h3>出错输出信息</h3>
+			<p class="lead">
+			错误的url请求
+			</p>
+	<pre class="prettyprint linenums">
+Sat Dec 22 2012 16:28:03 GMT+0800 (CST) 
+GET /stock controller: stock/index action: undefined
+>>> perform undefined;
+Rendering stock/index/undefined using layout stock/index_layout
+Error: Undefined action stock#wrong</pre>
+			<p class="lead">
+			错误的股票代码
+			<p>
+			<pre class="prettyprint linenums">
+Sat Dec 22 2012 16:40:31 GMT+0800 (CST) 
+GET /stock/query?asdas controller: stock/index action: query
+Query:  {"asdas":""}
+>>> perform query
+wrong stock num	</pre>
 		</div>
 		<div>
-			<h3>出错处理对策</h3>
+			<h3>出错处理对策</h3>			
+			<table class="table table-hover">
+				<tr><td>页面错误：</td><td>给出引导性的404 Page</td></tr>
+				<tr><td>查询错误：</td><td>返回wrong number</td></tr>
+				<tr><td>前缀漏写：</td><td>智能判断并添加</td></tr>
+				<tr><td>参数随意填写：</td><td>前端不予通过强制重写</td></tr>
+			</table>			
 		</div>
 	</section>
 	<div>
