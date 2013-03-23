@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>game</title>
+</head>
+<script src="./tt.js"></script>
+<body>
+</div>
+</body>
+<script>
+
+var tt = new TT.Stage();
+
+var assets = {
+	panda: "assets/akuan.png",
+	task: "assets/task.png"
+};
+
+
+TT.Load(assets,function(my){	
+	
+	function Panda(){};
+	Panda.prototype = new TT.Sprite({
+		img: my.panda,
+		pos: [100,100],
+		frames: TT.Frame(my.panda,{w:11})
+	});
+	
+	
+	Panda.prototype.rotate = function(){
+		var self = this;
+		setInterval(function(){self.angle += Math.PI/60},100);
+	}
+	
+	
+	var akuan = new Panda();
+	akuan.rotate();
+	akuan.angle = Math.PI/6;	
+	tt.add(akuan);
+	
+});
+</script>
+</html>
