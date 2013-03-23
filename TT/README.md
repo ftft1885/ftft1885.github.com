@@ -18,7 +18,7 @@
 
 ##How to Use
 
-[online demo](http://ftft1885.github.com/tt/demo.html)
+[online demo](http://ftft1885.github.com/tt)
 
 ##API
 
