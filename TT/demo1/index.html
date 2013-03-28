@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>game</title>
+</head>
+<script src="../tt.js"></script>
+<body>
+</div>
+</body>
+<script>
+
+var tt = new TT.Stage({width: 1200,height: 600});
+
+var assets = {
+	ground: "assets/ground.png",
+	panda: "assets/akuan.png",
+	task: "assets/task.png",
+	square: "assets/square.png",
+};
+
+
+TT.Load(assets,function(my){	
+	
+	function Panda(){};
+	Panda.prototype = new TT.Sprite({
+		img: my.panda,
+		pos: [100,100],
+		size: [60,60],
+		frames: TT.Frame(my.panda,{w:11})
+	});
+	
+	
+
+	
+	
+	var panda1 = new TT.Sprite({
+		img: my.panda,
+		pos: [300,300],
+		size: [60,60],
+		frames: TT.Frame(my.panda,{w:11})
+	});
+	tt.add(panda1);
+	
+	var panda2 = new TT.Sprite({
+		img: my.panda,
+		pos: [500,500],
+		size: [60,60],
+		frames: TT.Frame(my.panda,{w:11})
+	});
+	tt.add(panda2);
+	
+	
+	Panda.prototype.draw = function(){
+		this.walk();
+		this.rotate();
+	}
+	
+	Panda.prototype.walk = function(){	
+		this.pos[0]+= 2;		
+	}
+	
+	Panda.prototype.rotate = function(){
+		this.angle += Math.PI/10;
+	}
+	
+	var square = new TT.Sprite({
+		img: my.square,
+		zIndex: -9,
+		angle:Math.PI/3,
+		size: [70,70],
+		pos: [130,95]
+	});
+	
+	tt.add(square);
+	//console.log(square);
+	
+	var ground = new TT.Sprite({
+		img: my.ground,		
+		zIndex: -10
+	});
+	
+	tt.add(ground);
+	//console.log(ground);
+	
+	
+	var akuan = new Panda({
+		pos: [300,300]
+	});
+	console.log(akuan);
+	var akuans = [];
+	var index = 0;
+	//akuan.addEvent('walk',function(){akuan.pos[0]+= 2;},1);
+	//akuan.addEvent('rotate',function(){akuan.angle+= Math.PI/10},1);
+	
+	setInterval(function(){
+		//console.log(Panda);
+		
+		var akuan2 = new Panda();
+	//	console.log(akuan2);
+		tt.add(akuan2);
+		
+	},500);
+	
+	
+	
+	//akuan.rotate();
+	//console.log(akuan);
+	//akuan.angle = Math.PI/6;	
+	//console.log(akuan);
+	tt.add(akuan);
+	
+	
+});
+
+</script>
+</html>

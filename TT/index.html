@@ -33,8 +33,19 @@ TT.Load(assets,function(my){
 		setInterval(function(){self.angle += Math.PI/60},100);
 	}
 	
+
+	
+	console.log(Panda);
+	//Panda.run('walk',function(){this.pos[0] += 0.1},40);
+	
+	
+	
 	
 	var akuan = new Panda();
+	
+	console.log(akuan);
+	
+	
 	akuan.rotate();
 	akuan.angle = Math.PI/6;	
 	tt.add(akuan);

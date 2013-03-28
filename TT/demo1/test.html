@@ -1,0 +1,331 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>game</title>
+</head>
+<script src="../tt.js"></script>
+<body>
+</div>
+</body>
+<script>
+
+//猥琐至极的方法。。
+for(var i = -100; i < 101; i++){
+	//console.log(i,Math.atan(i));
+}
+var test = Math.atan(1000000000)
+//alert(test);
+//alert(Math.tan(-11));
+
+//3.14--(-1.57)--0
+var tt = new TT.Stage({width: 1200,height: 600});
+
+var assets = {
+	circle: "assets/circle.png",
+	ground: "assets/ground.png",
+	panda: "assets/akuan.png",
+	task: "assets/task.png",
+	square: "assets/square.png",
+	pao: "assets/pao.png",
+	fire: "assets/fire.png"
+};
+
+var map = {};
+
+for(var i = 0; i < 18; i++){
+	map[i] = {};
+	for(var j = 0; j < 8; j++){		
+		map[i][j] = 0;
+	} 
+}
+
+//-------------------------------------
+TT.Load(assets,function(my){	
+
+var face = [ Math.PI*3/2 , 0 , Math.PI/2 ,Math.PI ];
+//console.log(face);
+
+var ground = new TT.Sprite({
+	img: my.ground,		
+	zIndex: -10,
+
+});
+tt.add(ground);
+
+var circle = new TT.Sprite({
+	img: my.circle,		
+	zIndex: -11,
+	frames: [[30,30,300,300]],
+	pos: [105,125],
+	size: [250,250],
+	angle: face[3]
+});
+
+tt.add(circle);
+
+var square = new TT.Sprite({
+	img: my.square,
+	zIndex: 2,
+	size: [60,60],
+	pos: getCo(2,5)
+});
+square.angle = Math.PI / 6;
+//tt.add(square);
+
+
+
+
+function Panda(myopt){
+	this.height = 60;
+	this.width = 60;
+	this.fblood = 100;
+	this.cblood = 100;
+	this.__proto__ = new TT.Sprite({
+		img: my.panda,
+		pos: myopt.pos || getCo(0,4),
+		size: [60,60],
+		angle: myopt.angle || 0,		
+		frames: TT.Frame(my.panda,{w:11})
+	});
+	this.draw = function(){
+		this.walk();
+		this.choose();
+		this.drawBlood([this.pos[0]+10,this.pos[1],this.pos[0]+10+30*this.cblood/this.fblood,this.pos[1]]);
+		//console.log(this.pos);
+		//this.rotate();
+	}
+	var self = this;	
+	this.drawBlood = function(a){
+		//console.log(a);
+		TT.drawShape('line',a);
+	}
+	
+	this.choose = function(){
+		if(this.pos[0] > 200){			
+			//this.turnFace(0);
+		}
+	}
+	
+	this.walk = function(){
+		switch(this.angle){
+			case face[0]: this.pos[1] -= 2;return;
+			case face[1]: this.pos[0] += 5;return;
+			case face[2]: this.pos[0] += 2;return;
+			case face[3]: this.pos[1] += 2;
+		}
+
+		//this.pos[0] += 2;
+	}
+	this.turnFace = function(num){
+		if(this.angle = face[num]){
+			return;
+		}
+		this.angle = face[num];
+	}
+	
+	/*
+	this.rotate = function(){
+		this.angle += Math.PI/10;
+	}
+	*/
+	return this;
+}
+
+function getXY(x,y){
+	var _x = (x-75)/60;
+	var _y = (y-100)/60;
+	return [Math.floor(_x),Math.floor(_y)];
+}
+
+var readyCo = [0,0];
+document.onclick = function(e){
+	console.log(e)
+	var arr = getXY(e.pageX,e.pageY);
+	square.pos = getCo(arr[0],arr[1]);
+	if(arr[0] === readyCo[0] && arr[1] === readyCo[1]){
+		paotais[pindex] = new PaoTai(arr[0],arr[1]);
+		tt.add(paotais[pindex]);
+		circle.zIndex = -1000;
+		
+	}else{
+		var newpos = getCo(arr[0]-1.5,arr[1]-1.5);
+		circle.pos = newpos;
+		circle.zIndex = 0;
+		readyCo = arr;		
+	}
+}
+
+function getCo(x,y){//grid to coordinate
+	//0,0 75,100 
+	//0,1 135,100
+	return [75+60*x,100+60*y];
+}
+
+var panda = [];
+var pandaindex = 0;
+//-----pao class
+
+
+
+var paotais = [];
+var paos = [];
+var fires = [];
+var pindex = 0;
+
+function Pao(myopt){
+	this.__proto__ = new TT.Sprite({
+		img: my.pao,
+		pos: myopt.pos || getCo(3,3),	
+		size: [60,60],
+		angle: myopt.angle || face[1],
+		//spos: [100,200],
+		//ssize: [100,100],
+		zIndex: myopt.zIndex || 2,
+		frames:[[120,240,100,100]]
+	});
+	this.paoindex = pindex;
+	return this;
+}
+
+function Fire(myopt){
+	this.__proto__ = new TT.Sprite({
+		img: my.fire,
+		pos: myopt.pos || getCo(3,3),	
+		size: [60,60],
+		angle: myopt.angle || face[1],
+		zIndex: myopt.zIndex || -20,
+		frames:[[10,120,100,100]]
+	});
+	this.index = pindex;
+	return this;
+}
+function PaoTai(x,y,angle){
+	paos[pindex] = new Pao({
+		pos:getCo(x,y),
+		angle: angle||face[1],
+		zIndex: 0
+	}); 
+	fires[pindex] = new Fire({
+		pos:getCo(x,y),
+		angle: angle||face[1],
+		zIndex: -1
+	});
+	tt.add(paos[pindex]);
+	tt.add(fires[pindex]);
+	this.target = null;
+	this.targetblood = 10000;
+	this.pos = getCo(x,y);
+	this.status = "wait";
+	this.index = pindex;
+	
+	this.fire = function(x){//num = zIndex
+		if(typeof x === "number"){			
+			paos[this.index].angle = x;
+			fires[this.index].angle = x;
+		}
+		if(fires[this.index].zIndex >= 2){
+			paos[this.index].zIndex = 2;
+			fires[this.index].zIndex = 1;
+			
+		}else{
+			paos[this.index].zIndex = -1;
+			fires[this.index].zIndex = 2;
+		}		
+	}	
+	pindex++;
+	return this;
+}
+
+
+paotais[pindex] = new PaoTai(3,3);
+
+
+var director = new TT.Sprite({
+	check : function(){
+		var time = TT.getTime();	
+		if(fires[2]){
+			console.log(paos[2].zIndex);
+		}		
+		if(time/20 === ~~(time/20)){			
+			panda[pandaindex] = new Panda({});
+			tt.add(panda[pandaindex]);			
+			pandaindex++;
+		}
+		for(var i = 0; i < pindex; i++){
+			
+			
+			switch (paotais[i].status){
+				case "wait": 					
+					var min = 9999999;
+					var _x,_y;
+					var index = 0;
+					//console.log(panda);
+					//console.log(pandaindex);
+					for(var j = 0; j < pandaindex; j++){					
+						var x = panda[j].pos[0] - paotais[i].pos[0];
+						var y = panda[j].pos[1] - paotais[i].pos[1];
+						if(min > x*x+y*y){
+							min = x*x+y*y;
+							_x = panda[j].pos[0];
+							_y = panda[j].pos[1];
+							index = j;
+						}
+					};
+					min = Math.sqrt(min);					
+					if(min < 120){
+						paotais[i].status = "fire";
+						paotais[i].target = index;					
+						return;					
+					}else{						
+						paos[i].zIndex = 2;
+						fires[i].zIndex = -20;
+						paos[i].angle = face[1];
+						fires[i].angle = face[1];
+					}
+					return;
+					
+				case "fire":
+					if(typeof panda[paotais[i].target] === "undefined" || panda[paotais[i].target] <= 0){
+						paotais[i].status = "wait";
+						return;
+					}
+					var x = panda[paotais[i].target].pos[0]-paotais[i].pos[0];
+					var y = panda[paotais[i].target].pos[1]-paotais[i].pos[1];				
+					var min = Math.sqrt(x*x+y*y);
+					if(min > 120 ||  panda[paotais[i].target].cblood <= 0){
+						paotais[i].status = "wait";
+					}else{
+						var _x = panda[paotais[i].target].pos[0];
+						var _y = panda[paotais[i].target].pos[1];
+						var angle = Math.atan( (_y-paotais[i].pos[1]) / (_x - paotais[i].pos[0]) );
+						angle += 0.3;
+						if(paotais[i].pos[0] - _x > 0){
+							angle += Math.PI;
+						}				
+						//console.log(angle);
+						paotais[i].fire(angle);
+						//console.log(i);
+						if(panda[paotais[i].target].cblood <= 5){
+							paotais[i],status = "wait";				
+							tt.remove(panda[paotais[i].target]);
+							panda.splice(paotais[i].target,1);
+							paotais[i].target = -1;
+							pandaindex --;							
+						}else{
+							panda[paotais[i].target].cblood -= 5;
+							paotais[i].targetblood = panda[paotais[i].target].cblood;
+						}
+						
+					}
+			}			
+		}
+	}
+});
+tt.add(director);
+
+	
+});
+
+</script>
+</html>
