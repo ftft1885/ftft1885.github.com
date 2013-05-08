@@ -1,0 +1,140 @@
+<!doctyle html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>毕业设计中期检查</title>
+	<link rel="stylesheet" href="./style.css"></link>
+	<link rel="stylesheet" href="./highlight.css"></link>
+</head>
+<body>
+
+	<div id="impress">
+	
+		<div id="step" class="step ppt text-center" data-x="-1000" data-y="-1500">
+			<h2 class="vertical-center">流量支付控制web管理界面设计与实现</h2>
+			<p>
+				<span class="rotate-1">冯通</span>
+				<span class="rotate-2">PB09210157</span>
+			</p>
+		</div>
+		
+		<div class="step ppt" data-x="0" data-y="-1500">
+			<h3 class="text-center">后端服务器: NodeJS</h3>
+			<h4>Why NodeJS</h4>
+			<ul>
+				<li>使用javascript，可以保持前后端统一（如正则验证）</li>
+				<li>v8虚拟机速度很快</li>
+				<li>epoll机制和单线程非阻塞模型</li>
+			</ul>
+		</div>
+		
+		<div class="step ppt" data-x="1000" data-y="-1500">
+			<h3 class="text-center">已完成进度</h3>
+			<ul>
+				<li>数据文件处理</li>
+				<li>Rest Api</li>
+				<li>HTML模板引擎制作</li>
+				<li>MVVM框架</li>
+			</ul>			
+		</div>
+		
+		<div class="step width9" data-scale="4" data-x="0" data-y="0">
+			<h3 class="text-center">数据文件处理</h3>
+			<p>异步一次遍历全部数据文件</p>
+			<p>数据文件采用yaml格式</p>
+			<pre>
+people:
+  Lucy:
+    name: Lucy
+    age: 16
+  Jack:
+    name: Jack
+    age: 17
+			</pre>
+			
+		</div>
+		
+		<div class="step width9" data-scale="5" data-x="850" data-y="3000" data-rotate="90">
+			<h3 class="text-center">Rest-Api 设计</h3>
+			
+			<div class="code">
+				<p>GET /service</p>
+				<blockquote>
+					<p>GET /service/ftp</p>
+						<blockquote>
+						<p>GET /service/ftp/pool1</p>
+						<p>PUT /service/ftp/pool1</p>
+						<p>GET /service/ftp/pool2</p>
+						</blockquote>
+					<p>GET /service/http</p>
+				<blockquote>
+				<p>GET /service/http/pool3</p>
+				<p>POST /service/http/pool9</p>
+				<p>GET /service/http/pool4</p>
+			</div>
+		</div>
+		
+		<div class="step width9" data-scale="6" data-x="3500" data-y="2100" data-rotate="180">
+			<h3 class="text-center">HTML模板引擎制作</h3>
+			<p>什么是HTML模板引擎？</p>
+			<p class="code">模板引擎分后端渲染和前端渲染两种，我们熟知的php和asp属于后端渲染模板</p>
+			<p class="code">模板的基本功能就是定义一个新的标签（或其他形状），允许在该标签中加入可执行代码</p>
+		</div>
+		
+		<div class="step" data-scale="1" data-x="2825" data-y="2325" data-z="-3000" data-rotate="300">
+			<h3 class="text-center">HTML模板内嵌可执行代码简单demo</h3>
+			
+<pre><code>&lt;ul>
+&lt;%  <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; year.length; i++){ %>
+    &lt;li>&lt;%year[i]%>年大吉&lt;/li>
+&lt;% } %>
+&lt;/ul>
+<span class="comment">//-----</span>
+render(id,{year:[<span class="string">'鼠'</span>,<span class="string">'牛'</span>,<span class="string">'虎'</span>,<span class="string">'兔'</span>,<span class="string">'龙'</span>,<span class="string">'蛇'</span>,<span class="string">'马'</span>,<span class="string">'羊'</span>,<span class="string">'猴'</span>,<span class="string">'鸡'</span>,<span class="string">'狗'</span>,<span class="string">'猪'</span>]});</code></pre>
+
+
+		</div>
+		
+		<div class="step width9" data-scale="6" data-x="3500" data-y="-850" data-rotate="270">
+			<h3 class="text-center">MVVM框架制作</h3>
+			<p>什么是MVVM？</p>
+			<ul class="font48">
+				<li>M ===> Model</li>
+				<li>V ===> View</li>
+				<li>VM ===> ViewModel</li>
+			</ul>
+		</div>
+		
+		<div class="step width9" data-x="6000" data-y="4000" data-scale="2">
+			<h3 class="text-center">MVVM的特点与功能</h3>
+			<ul class="font48">
+				<li>0 DOM操作</li>
+				<li>Model与View的数据双向绑定</li>
+				<li>复杂逻辑表单处理（如嵌套）</li>
+				<li>提供监听函数，可自由处理</li>
+			</ul>
+		</div>
+		
+		<div class="step width9" data-x="6200" data-y="4300" data-z="-100" data-rotate-x="-40" data-rotate-y="10" data-scale="2">
+			<h3 class="text-center">Next More ...</h3>
+			<p>1. css样式重构，或制作css预编译器</p>
+			<p>2. 登录模块安全性加强</p>
+			<p>3. 表单富展现与数据验证</p>
+			<p>4. 复杂表单进行AOP横切</p>
+		</div>
+		
+		<div class="step full-screen" data-x="7500" data-y="5600" data-z="-100" data-rotate-x="-80" data-rotate-y="200" data-scale="2">
+			
+				<h3 class="thank">谢 谢。</h3>				
+			
+		</div>
+		
+		
+	</div>
+
+	<script src="js/impress.js"></script>
+	<script>
+		impress().init();
+	</script>
+</body>
+</html>
