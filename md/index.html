@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>markdown edit</title>
+	<link rel="stylesheet" href="css/codemirror.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/preview.css" />
+	<script src="js/codemirror.js"></script>
+	<script src="js/markdown-hl.js"></script>
+	<script src="js/markdown-parser.js"></script>
+</head>
+<body>
+	<div class="edit">
+	<textarea id="myedit" name="code">
+## 欢迎使用 MarkdownPad++ ##
+
+**MarkdownPad++** 是 基于Web 平台的一个功能完善的 Markdown 编辑器。
+
+### 专为 Markdown 打造 ###
+
+提供了语法高亮和方便的快捷键功能，给您最好的 Markdown 编写体验。
+
+来试一下：
+
+- **粗体** (`Ctrl+B`) and *斜体* (`Ctrl+I`)
+- 引用 (`Ctrl+Q`)
+- 代码块 (`Ctrl+K`)
+- 标题 1, 2, 3 (`Ctrl+1`, `Ctrl+2`, `Ctrl+3`)
+- 列表 (`Ctrl+U` and `Ctrl+Shift+O`)
+
+### 实时预览，所见即所得 ###
+
+> 目前唯一实现的功能。。
+
+无需猜测您的 [语法](http://uitool.com) 是否正确；每当您敲击键盘，实时预览功能都会立刻准确呈现出文档的显示效果。
+
+代码演示:
+
+	标题
+	# 这是一级标题
+	## 这个是副标题
+	### 三级标题
+	#### 四级标题
+
+	图片与链接
+	![image description](image URL)
+	[link text](link URL)
+	*emphasize* **strong**
+	_emphasize_ __strong__
+
+	着重强调
+	*emphasize* **strong**
+	_emphasize_ __strong__
+
+	引用的内容
+	> 生命是一袭华美的袍，爬满了虱子。
+
+	有序列表
+	1. 有序列表第一条
+	2. 有序列表第二条
+
+	无序列表
+	- 无序列表
+	- 无序列表
+
+### 自由定制 ###
+ 
+100% 可自定义的字体、配色、布局和样式，让您可以将 MarkdownPad++ 配置的得心应手。
+
+### 为高级用户而设计的稳定的 Markdown 编辑器 ###
+
+有了标签式多文档界面、内置的图片上传、会话管理、拼写检查、自动保存、语法高亮以及内置的 CSS 管理器，您可以随心所欲地使用 MarkdownPad++。
+</textarea>
+	</div>
+	<div id="preview" class="preview markdown">
+	</div>
+
+<script>
+
+var preview = document.getElementById('preview');
+var myedit = document.getElementById('myedit');
+var editor = CodeMirror.fromTextArea(myedit, {
+	lineNumbers: true,
+	viewportMargin: Infinity,
+	lineWrapping: true, // 是否自动换行
+});
+preview.innerHTML = markdown.toHTML(editor.getValue());
+editor.on('change', function() {	
+	var text = editor.getValue();
+	text = text.replace(/\s+$/, '');
+	preview.innerHTML = markdown.toHTML(text);
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+.markdown {
+	font-family: "Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei","微软雅黑",tahoma,arial,simsun,"宋体";	
+	line-height: 1.3em;
+	color: #555;
+}
+
+.markdown pre {
+
+	white-space: pre-wrap;
+	overflow:auto;
+	background: #272822;
+	border-radius: 4px;
+	display: block; padding: 0.5em;
+	background: #272822;
+	color: #EEE;
+	line-height: 18px !important;
+}
+
+.markdown code {
+	font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Courier, monospace !important;
+}
+.markdown pre > code {
+	font-size: 16px;
+	background-color: transparent;
+	border: 0;
+	color: #EEE;
+	padding: 0px;
+	font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Courier, monospace !important;
+}
+
+.markdown-text{
+	margin-bottom: 20px;
+}
+
+.markdown-text img{
+	max-width: 604px;
+}
+
+.markdown-title{
+	display: inline-block;
+	margin-bottom: 10px;
+}
+
+
+.markdown ol{
+	padding-left: 40px;
+}
+.markdown ul{
+	padding-left: 40px;
+}
+
+.markdown ol > li{
+	list-style-type: decimal;
+}
+
+.markdown ul > li{
+	list-style-type: disc;
+}
+
+
+
+.markdown h1,
+.markdown h2,
+.markdown h3{
+	line-height: 1.5em;
+	padding: 10px 0;
+}
+
+.markdown a{
+	color: #3AA2B4;
+}
+
+.markdown a:hover{
+	color: #E26C6C;
+}
+
+.markdown blockquote {
+    border-left: 0.4em solid #DDD;
+    margin: 15px 0 25px 0;
+    padding: 0 15px;
+    color: #777;
+}
+
+code{
+	color: #c7254e;
+	background-color: #f9f2f4;
+	border-radius: 4px;
+}
+
+.markdown strong {
+    color: #060606;
+    font-weight: normal;
+    font-size: 1.1em;
+}
